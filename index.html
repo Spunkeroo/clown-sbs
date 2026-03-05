@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>clown.sbs — Side by Side: Win vs Fail</title>
+  <meta name="description" content="The internet's #1 A vs B voting platform. Cat vs Dog, iPhone vs Android, Pizza vs Burger — you vote, the internet decides. Live results updated every 10 seconds.">
+  <meta name="keywords" content="vote, versus, a vs b, poll, comparison, cat vs dog, iphone vs android, community voting">
+  <meta property="og:title" content="clown.sbs — Side by Side: Win vs Fail">
+  <meta property="og:description" content="You vote. The internet decides. Live A vs B community voting.">
+  <meta property="og:url" content="https://clown.sbs/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@SpunkArt13">
+  <meta name="twitter:title" content="clown.sbs — Side by Side: Win vs Fail">
+  <meta name="twitter:description" content="You vote. The internet decides. Live A vs B community voting.">
+  <link rel="canonical" href="https://clown.sbs/">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card: #1a1a2e;
+      --card2: #12121a;
+      --accent: #ff6b00;
+      --accent2: #fee440;
+      --purple: #bf5af2;
+      --text: #f0f0f0;
+      --muted: #a0a0b8;
+      --border: #2a2a3e;
+      --radius: 12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(10,10,15,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      gap: 12px;
+    }
+    .nav-logo {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-tag {
+      color: var(--muted);
+      font-size: 0.8rem;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .nav-tip-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity .2s;
+    }
+    .nav-tip-btn:hover { opacity: 0.85; }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 60px 20px 40px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,107,0,0.12);
+      border: 1px solid rgba(255,107,0,0.3);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .hero h1 .a { color: var(--accent); }
+    .hero h1 .b { color: var(--accent2); }
+    .hero-sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 10px;
+    }
+    .hero-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: vtrPulse 2s infinite;
+      display: inline-block;
+    }
+
+    /* MATCH GRID */
+    .section-label {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    #match-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      max-width: 1100px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+    }
+    @media (max-width: 700px) {
+      #match-grid { grid-template-columns: 1fr; }
+    }
+
+    .match-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      transition: border-color .2s;
+    }
+    .match-card:hover { border-color: rgba(255,107,0,0.35); }
+
+    .match-card-title {
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+    .match-card-sub {
+      color: var(--muted);
+      font-size: 0.75rem;
+      margin-bottom: 16px;
+    }
+
+    .vote-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .vote-btn {
+      background: var(--card2);
+      border: 2px solid var(--border);
+      color: var(--text);
+      padding: 16px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: all .2s;
+      line-height: 1.3;
+    }
+    .vote-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(255,107,0,0.1);
+      transform: translateY(-1px);
+    }
+    .vote-btn:disabled { cursor: default; transform: none; }
+    .vote-btn.voted-a {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .vote-btn.voted-b {
+      background: var(--accent2);
+      border-color: var(--accent2);
+      color: #000;
+    }
+
+    .results-block { display: none; }
+    .bars-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .bar-wrap { }
+    .bar-track {
+      background: var(--border);
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .bar-fill-a {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      width: 50%;
+      transition: width .5s ease;
+    }
+    .bar-fill-b {
+      height: 100%;
+      background: var(--accent2);
+      border-radius: 3px;
+      width: 50%;
+      transition: width .5s ease;
+    }
+    .bar-pct { color: var(--muted); font-size: 0.75rem; }
+
+    .total-votes { color: var(--muted); font-size: 0.75rem; margin-bottom: 10px; }
+
+    .share-block { }
+    .share-x-btn {
+      display: inline-block;
+      background: #1da1f2;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity .2s;
+    }
+    .share-x-btn:hover { opacity: 0.85; text-decoration: none; }
+
+    /* AFFILIATES */
+    .affiliates {
+      background: var(--card2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 20px;
+      margin-bottom: 60px;
+    }
+    .affiliates-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .affiliates h2 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .affiliates p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 28px;
+    }
+    .aff-grid {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .aff-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-width: 160px;
+      transition: border-color .2s, transform .2s;
+      text-decoration: none;
+    }
+    .aff-card:hover { border-color: var(--accent); transform: translateY(-2px); text-decoration: none; }
+    .aff-icon { font-size: 2rem; }
+    .aff-name { color: var(--text); font-size: 0.9rem; font-weight: 700; }
+    .aff-desc { color: var(--muted); font-size: 0.75rem; text-align: center; }
+
+    /* EMPIRE */
+    .empire {
+      max-width: 1100px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+    }
+    .empire h2 {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .empire-sub {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 28px;
+    }
+    .empire-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .empire-link {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .empire-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(255,107,0,0.08);
+      text-decoration: none;
+    }
+    .empire-link.current {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(255,107,0,0.1);
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    footer .footer-inner { max-width: 900px; margin: 0 auto; }
+    footer p { margin-bottom: 6px; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+
+    /* ANIMATIONS */
+    @keyframes vtrPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    /* TIP MODAL */
+    #tip-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    .tip-modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+    }
+    .tip-modal-box h3 { color: var(--text); margin-bottom: 8px; font-size: 1.2rem; }
+    .tip-modal-box p { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+    #tip-addr {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #00f5d4;
+      word-break: break-all;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: border-color .2s;
+    }
+    #tip-addr:hover { border-color: #00f5d4; }
+    .tip-copy-hint { color: var(--muted); font-size: 0.8rem; margin-bottom: 16px; }
+    .tip-close-btn {
+      background: var(--border);
+      color: var(--text);
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background .2s;
+    }
+    .tip-close-btn:hover { background: #3a3a5e; }
+
+    /* VTR badge */
+    #vtr-badge {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: var(--muted);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vtr-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: vtrPulse 2s infinite;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">🤡 clown<span>.</span>sbs</a>
+      <span class="nav-tag">Side by Side: You Vote.</span>
+      <button class="nav-tip-btn" onclick="openTip()">🧡 Tip</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">A vs B — Community Voting</div>
+    <h1>You Vote.<br><span class="a">The Internet</span> <span class="b">Decides.</span></h1>
+    <p class="hero-sub">Pick your side on life's biggest debates. Every vote is live.</p>
+    <span class="hero-live">
+      <span class="live-dot"></span>
+      Live vote counts update every 10 seconds.
+    </span>
+  </section>
+
+  <!-- MATCH GRID -->
+  <div style="max-width:1100px;margin:0 auto;padding:0 20px 12px;">
+    <p class="section-label">Vote on 10 debates — results are live</p>
+  </div>
+  <div id="match-grid"></div>
+
+  <!-- AFFILIATES -->
+  <section class="affiliates">
+    <div class="affiliates-inner">
+      <h2>Featured Partners</h2>
+      <p>Support free sites like this — check out our partners below.</p>
+      <div class="aff-grid">
+        <a href="https://coinbase.com/join/YAGES3X?src=referral-link" target="_blank" rel="noopener" class="aff-card">
+          <span class="aff-icon">🪙</span>
+          <span class="aff-name">Coinbase</span>
+          <span class="aff-desc">Buy crypto free</span>
+        </a>
+        <a href="https://winna.com/?r=Spunkeroo" target="_blank" rel="noopener" class="aff-card">
+          <span class="aff-icon">🎰</span>
+          <span class="aff-name">Winna</span>
+          <span class="aff-desc">Play &amp; win</span>
+        </a>
+        <a href="https://www.amazon.com/s?k=funny+stuff&tag=spunk01-20" target="_blank" rel="noopener" class="aff-card">
+          <span class="aff-icon">📦</span>
+          <span class="aff-name">Amazon</span>
+          <span class="aff-desc">Funny stuff picks</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMPIRE GRID -->
+  <section class="empire">
+    <h2>The Empire</h2>
+    <p class="empire-sub">A network of free tools, games, and communities.</p>
+    <div class="empire-grid">
+      <a href="https://spunk.bet" target="_blank" rel="noopener" class="empire-link">spunk.bet</a>
+      <a href="https://pfp.best" target="_blank" rel="noopener" class="empire-link">pfp.best</a>
+      <a href="https://spunkart.com" target="_blank" rel="noopener" class="empire-link">spunkart.com</a>
+      <a href="https://13.money" target="_blank" rel="noopener" class="empire-link">13.money</a>
+      <a href="https://13.markets" target="_blank" rel="noopener" class="empire-link">13.markets</a>
+      <a href="https://13.golf" target="_blank" rel="noopener" class="empire-link">13.golf</a>
+      <a href="https://13.energy" target="_blank" rel="noopener" class="empire-link">13.energy</a>
+      <a href="https://13.dance" target="_blank" rel="noopener" class="empire-link">13.dance</a>
+      <a href="https://free.institute" target="_blank" rel="noopener" class="empire-link">free.institute</a>
+      <a href="https://free.gripe" target="_blank" rel="noopener" class="empire-link">free.gripe</a>
+      <a href="https://chicago.coach" target="_blank" rel="noopener" class="empire-link">chicago.coach</a>
+      <a href="https://predict.horse" target="_blank" rel="noopener" class="empire-link">predict.horse</a>
+      <a href="https://predict.pics" target="_blank" rel="noopener" class="empire-link">predict.pics</a>
+      <a href="https://predict.mom" target="_blank" rel="noopener" class="empire-link">predict.mom</a>
+      <a href="https://predict.codes" target="_blank" rel="noopener" class="empire-link">predict.codes</a>
+      <a href="https://predict.boats" target="_blank" rel="noopener" class="empire-link">predict.boats</a>
+      <a href="https://predict.yachts" target="_blank" rel="noopener" class="empire-link">predict.yachts</a>
+      <a href="https://alien.best" target="_blank" rel="noopener" class="empire-link">alien.best</a>
+      <a href="https://plush.best" target="_blank" rel="noopener" class="empire-link">plush.best</a>
+      <a href="https://plush.surf" target="_blank" rel="noopener" class="empire-link">plush.surf</a>
+      <a href="https://clown.best" target="_blank" rel="noopener" class="empire-link">clown.best</a>
+      <a href="https://clown.surf" target="_blank" rel="noopener" class="empire-link">clown.surf</a>
+      <a href="https://clown.cam" target="_blank" rel="noopener" class="empire-link">clown.cam</a>
+      <a href="https://clown.sbs" class="empire-link current">clown.sbs</a>
+      <a href="https://iai.autos" target="_blank" rel="noopener" class="empire-link">iai.autos</a>
+      <a href="https://iai.boats" target="_blank" rel="noopener" class="empire-link">iai.boats</a>
+      <a href="https://i13.best" target="_blank" rel="noopener" class="empire-link">i13.best</a>
+      <a href="https://i13.buzz" target="_blank" rel="noopener" class="empire-link">i13.buzz</a>
+      <a href="https://i13.autos" target="_blank" rel="noopener" class="empire-link">i13.autos</a>
+      <a href="https://i13.lat" target="_blank" rel="noopener" class="empire-link">i13.lat</a>
+      <a href="https://i13.pics" target="_blank" rel="noopener" class="empire-link">i13.pics</a>
+      <a href="https://i13.space" target="_blank" rel="noopener" class="empire-link">i13.space</a>
+      <a href="https://ai13.fun" target="_blank" rel="noopener" class="empire-link">ai13.fun</a>
+      <a href="https://ai13.store" target="_blank" rel="noopener" class="empire-link">ai13.store</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <p>🤡 <strong>clown.sbs</strong> — Side by Side: Win vs Fail</p>
+      <p>You vote. The internet decides. Live results, always free.</p>
+      <p style="margin-top:10px;">
+        Built by <a href="https://spunkart.com" target="_blank" rel="noopener">@SpunkArt13</a> &nbsp;|&nbsp;
+        <a href="https://spunk.bet" target="_blank" rel="noopener">spunk.bet</a> &nbsp;|&nbsp;
+        <button onclick="openTip()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.8rem;padding:0;">🧡 Tip</button>
+      </p>
+      <p style="margin-top:8px;font-size:0.72rem;">
+        &copy; 2026 SPUNK LLC. All rights reserved.
+        &nbsp;|&nbsp; <a href="/sitemap.xml">Sitemap</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- TIP MODAL -->
+  <div id="tip-modal" onclick="if(event.target===this)closeTip()">
+    <div class="tip-modal-box">
+      <h3>🧡 Tip Spunk</h3>
+      <p>Built by one person with AI. Every tip keeps these sites free. 🧡</p>
+      <div id="tip-addr" onclick="copyTip()">bc1pkepg42ctsvsxk499qu02qqyyz88gwjchnjpsu22wmng9rhpfv3jqw2t2hm</div>
+      <p class="tip-copy-hint">Click to copy &bull; Bitcoin (BTC)</p>
+      <button class="tip-close-btn" onclick="closeTip()">Close</button>
+    </div>
+  </div>
+
+  <!-- VTR BADGE -->
+  <div id="vtr-badge">
+    <span class="vtr-dot"></span>
+    <span id="vtr-count">...</span>
+  </div>
+
+  <!-- TIP MODAL SCRIPT -->
+  <script>
+    function openTip() {
+      var m = document.getElementById('tip-modal');
+      if (m) m.style.display = 'flex';
+    }
+    function closeTip() {
+      var m = document.getElementById('tip-modal');
+      if (m) m.style.display = 'none';
+    }
+    function copyTip() {
+      navigator.clipboard.writeText('bc1pkepg42ctsvsxk499qu02qqyyz88gwjchnjpsu22wmng9rhpfv3jqw2t2hm').then(function() {
+        var el = document.getElementById('tip-addr');
+        if (el) {
+          var o = el.textContent;
+          el.textContent = '✓ Copied!';
+          setTimeout(function() { el.textContent = o; }, 2000);
+        }
+      }).catch(function() {});
+    }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeTip(); });
+  </script>
+
+  <!-- VTR SCRIPT -->
+  <script>
+    (function() {
+      if (window._vtrInit) return;
+      window._vtrInit = true;
+      var DB = 'https://predict-network-ec767-default-rtdb.firebaseio.com';
+      var site = (location.hostname || 'local').replace(/\./g, '_').replace(/[#$\[\]]/g, '_');
+      var sid = 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      var sRef = DB + '/vtr/' + site + '/s/' + sid + '.json';
+      var allRef = DB + '/vtr/' + site + '/s.json';
+      var now = Date.now;
+      function ping() {
+        fetch(sRef, { method: 'PUT', body: JSON.stringify({ t: now() }), headers: { 'Content-Type': 'application/json' } }).catch(function() {});
+      }
+      function refresh() {
+        fetch(allRef).then(function(r) { return r.json(); }).then(function(d) {
+          var n = 1;
+          if (d && typeof d === 'object') {
+            var vals = Object.values(d);
+            n = Math.max(1, vals.filter(function(v) { return v && v.t && (now() - v.t) < 25000; }).length);
+            Object.entries(d).forEach(function(e) {
+              if (e[1] && e[1].t && (now() - e[1].t) > 60000)
+                fetch(DB + '/vtr/' + site + '/s/' + e[0] + '.json', { method: 'DELETE' }).catch(function() {});
+            });
+          }
+          var el = document.getElementById('vtr-count');
+          if (el) el.textContent = n + (n === 1 ? ' visitor' : ' visitors') + ' online';
+        }).catch(function() {
+          var el = document.getElementById('vtr-count');
+          if (el) el.textContent = '1 visitor online';
+        });
+      }
+      var day = new Date().toISOString().slice(0, 10);
+      var hRef = DB + '/vtr/' + site + '/hits/' + day + '.json';
+      fetch(hRef).then(function(r) { return r.json(); }).then(function(n) {
+        fetch(hRef, { method: 'PUT', body: JSON.stringify((n || 0) + 1), headers: { 'Content-Type': 'application/json' } }).catch(function() {});
+      }).catch(function() {});
+      window.addEventListener('pagehide', function() {
+        fetch(sRef, { method: 'DELETE', keepalive: true }).catch(function() {});
+      });
+      ping(); refresh();
+      setInterval(function() { ping(); refresh(); }, 10000);
+    })();
+  </script>
+
+  <!-- VOTING ENGINE -->
+  <script>
+    const DB = 'https://predict-network-ec767-default-rtdb.firebaseio.com';
+
+    const MATCHES = [
+      { id: 'cat-vs-dog',             title: 'The Eternal Debate',      a: 'Cat 🐱',       b: 'Dog 🐶' },
+      { id: 'iphone-vs-android',      title: 'Smartphone War',          a: 'iPhone 📱',    b: 'Android 🤖' },
+      { id: 'pizza-vs-burger',        title: 'Ultimate Food Fight',     a: 'Pizza 🍕',     b: 'Burger 🍔' },
+      { id: 'twitter-vs-instagram',   title: 'Social Media Showdown',   a: 'Twitter/X 🐦', b: 'Instagram 📸' },
+      { id: 'morning-vs-night',       title: 'When Do You Peak?',       a: 'Morning ☀️',   b: 'Night Owl 🦉' },
+      { id: 'coffee-vs-tea',          title: 'Beverage War',            a: 'Coffee ☕',     b: 'Tea 🍵' },
+      { id: 'pc-vs-console',          title: 'Gaming Debate',           a: 'PC Gaming 🖥️', b: 'Console 🎮' },
+      { id: 'crypto-vs-stocks',       title: 'Where Is Your Money?',    a: 'Crypto 🪙',    b: 'Stocks 📈' },
+      { id: 'tabs-vs-spaces',         title: 'Developers Only',         a: 'Tabs ⇥',       b: 'Spaces · · ·' },
+      { id: 'remote-vs-office',       title: 'Work Style',              a: 'Remote 🏠',    b: 'Office 🏢' }
+    ];
+
+    const voted = JSON.parse(localStorage.getItem('clownsbs_voted') || '{}');
+
+    function esc(s) {
+      return s.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+    }
+
+    function renderMatches() {
+      const grid = document.getElementById('match-grid');
+      if (!grid) return;
+
+      grid.innerHTML = MATCHES.map(function(m) {
+        const myVote = voted[m.id];
+        const btnAClass = 'vote-btn' + (myVote === 'a' ? ' voted-a' : '');
+        const btnBClass = 'vote-btn' + (myVote === 'b' ? ' voted-b' : '');
+        const disabledAttr = myVote ? ' disabled' : '';
+
+        return `
+          <div class="match-card" id="mc-${m.id}">
+            <div class="match-card-title">${m.title}</div>
+            <div class="match-card-sub">${m.id}</div>
+            <div class="vote-grid">
+              <button
+                class="${btnAClass}"
+                id="btn-${m.id}-a"
+                onclick="vote('${m.id}','a','${esc(m.a)}','${esc(m.title)}')"
+                ${disabledAttr}
+              >${m.a}${myVote === 'a' ? '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">✓ Your vote</span>' : ''}</button>
+              <button
+                class="${btnBClass}"
+                id="btn-${m.id}-b"
+                onclick="vote('${m.id}','b','${esc(m.b)}','${esc(m.title)}')"
+                ${disabledAttr}
+              >${m.b}${myVote === 'b' ? '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">✓ Your vote</span>' : ''}</button>
+            </div>
+            <div class="results-block" id="results-${m.id}" style="${myVote ? 'display:block;' : 'display:none;'}">
+              <div class="bars-grid">
+                <div class="bar-wrap">
+                  <div class="bar-track"><div class="bar-fill-a" id="bar-${m.id}-a" style="width:50%;"></div></div>
+                  <span class="bar-pct" id="pct-${m.id}-a">50%</span>
+                </div>
+                <div class="bar-wrap">
+                  <div class="bar-track"><div class="bar-fill-b" id="bar-${m.id}-b" style="width:50%;"></div></div>
+                  <span class="bar-pct" id="pct-${m.id}-b">50%</span>
+                </div>
+              </div>
+              <div class="total-votes" id="total-${m.id}">Loading votes...</div>
+              <div class="share-block" id="share-${m.id}" style="${myVote ? 'display:block;' : 'display:none;'}">
+                ${myVote ? buildShareLink(m.id, myVote === 'a' ? m.a : m.b, m.title) : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      loadAllVotes();
+    }
+
+    function buildShareLink(matchId, label, title) {
+      const tweet = encodeURIComponent('I voted ' + label + ' in "' + title + '"! See live results \u2192 clown.sbs @SpunkArt13');
+      return '<a href="https://twitter.com/intent/tweet?text=' + tweet + '" target="_blank" rel="noopener" class="share-x-btn">Share Result on X \u2192</a>';
+    }
+
+    async function vote(matchId, side, label, title) {
+      if (voted[matchId]) return;
+
+      voted[matchId] = side;
+      localStorage.setItem('clownsbs_voted', JSON.stringify(voted));
+
+      // Update button styles immediately
+      const btnA = document.getElementById('btn-' + matchId + '-a');
+      const btnB = document.getElementById('btn-' + matchId + '-b');
+      if (btnA) {
+        btnA.disabled = true;
+        if (side === 'a') {
+          btnA.className = 'vote-btn voted-a';
+          btnA.innerHTML = btnA.textContent.trim() + '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">✓ Your vote</span>';
+        }
+      }
+      if (btnB) {
+        btnB.disabled = true;
+        if (side === 'b') {
+          btnB.className = 'vote-btn voted-b';
+          btnB.innerHTML = btnB.textContent.trim() + '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">✓ Your vote</span>';
+        }
+      }
+
+      // Show results block
+      const results = document.getElementById('results-' + matchId);
+      if (results) results.style.display = 'block';
+
+      // Increment vote in Firebase
+      try {
+        const ref = DB + '/clownsbs/votes/' + matchId + '/' + side + '.json';
+        const cur = await fetch(ref).then(function(r) { return r.json(); }).catch(function() { return 0; });
+        await fetch(ref, {
+          method: 'PUT',
+          body: JSON.stringify((parseInt(cur) || 0) + 1),
+          headers: { 'Content-Type': 'application/json' }
+        }).catch(function() {});
+      } catch (e) {}
+
+      // Show share button
+      const shareEl = document.getElementById('share-' + matchId);
+      if (shareEl) {
+        shareEl.style.display = 'block';
+        // Find the match to get the right MATCHES entry
+        const m = MATCHES.find(function(x) { return x.id === matchId; });
+        if (m) {
+          shareEl.innerHTML = buildShareLink(matchId, label, title);
+        }
+      }
+
+      loadMatchVotes(matchId);
+    }
+
+    async function loadMatchVotes(matchId) {
+      try {
+        const [aRaw, bRaw] = await Promise.all([
+          fetch(DB + '/clownsbs/votes/' + matchId + '/a.json').then(function(r) { return r.json(); }).catch(function() { return 0; }),
+          fetch(DB + '/clownsbs/votes/' + matchId + '/b.json').then(function(r) { return r.json(); }).catch(function() { return 0; })
+        ]);
+        const aV = parseInt(aRaw) || 0;
+        const bV = parseInt(bRaw) || 0;
+        const total = aV + bV;
+        const aPct = total ? Math.round(aV / total * 100) : 50;
+        const bPct = total ? Math.round(bV / total * 100) : 50;
+
+        // Show results if already voted
+        if (voted[matchId]) {
+          const results = document.getElementById('results-' + matchId);
+          if (results) results.style.display = 'block';
+        }
+
+        const barA = document.getElementById('bar-' + matchId + '-a');
+        const barB = document.getElementById('bar-' + matchId + '-b');
+        if (barA) barA.style.width = aPct + '%';
+        if (barB) barB.style.width = bPct + '%';
+
+        const pctA = document.getElementById('pct-' + matchId + '-a');
+        const pctB = document.getElementById('pct-' + matchId + '-b');
+        if (pctA) pctA.textContent = aPct + '% (' + aV + ')';
+        if (pctB) pctB.textContent = bPct + '% (' + bV + ')';
+
+        const totalEl = document.getElementById('total-' + matchId);
+        if (totalEl) totalEl.textContent = total.toLocaleString() + ' total votes';
+      } catch (e) {}
+    }
+
+    async function loadAllVotes() {
+      await Promise.all(MATCHES.map(function(m) { return loadMatchVotes(m.id); }));
+    }
+
+    // Init
+    renderMatches();
+    setInterval(loadAllVotes, 10000);
+  </script>
+
+</body>
+</html>
