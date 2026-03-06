@@ -699,13 +699,13 @@
                 id="btn-${m.id}-a"
                 onclick="vote('${m.id}','a','${esc(m.a)}','${esc(m.title)}')"
                 ${disabledAttr}
-              >${m.a}${myVote === 'a' ? '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">✓ Your vote</span>' : ''}</button>
+              >🤡 ${m.a}${myVote === 'a' ? '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">🤡 Your pick</span>' : ''}</button>
               <button
                 class="${btnBClass}"
                 id="btn-${m.id}-b"
                 onclick="vote('${m.id}','b','${esc(m.b)}','${esc(m.title)}')"
                 ${disabledAttr}
-              >${m.b}${myVote === 'b' ? '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">✓ Your vote</span>' : ''}</button>
+              >🤡 ${m.b}${myVote === 'b' ? '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">🤡 Your pick</span>' : ''}</button>
             </div>
             <div class="results-block" id="results-${m.id}" style="${myVote ? 'display:block;' : 'display:none;'}">
               <div class="bars-grid">
@@ -748,14 +748,14 @@
         btnA.disabled = true;
         if (side === 'a') {
           btnA.className = 'vote-btn voted-a';
-          btnA.innerHTML = btnA.textContent.trim() + '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">✓ Your vote</span>';
+          btnA.innerHTML = btnA.textContent.trim() + '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">🤡 Your pick</span>';
         }
       }
       if (btnB) {
         btnB.disabled = true;
         if (side === 'b') {
           btnB.className = 'vote-btn voted-b';
-          btnB.innerHTML = btnB.textContent.trim() + '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">✓ Your vote</span>';
+          btnB.innerHTML = btnB.textContent.trim() + '<br><span style="font-size:0.7rem;font-weight:400;opacity:0.85;">🤡 Your pick</span>';
         }
       }
 
